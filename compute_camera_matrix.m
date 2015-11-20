@@ -3,10 +3,16 @@ function [ P ] = compute_camera_matrix( I, X )
     num_points = size(X,2);
     
     % Ginput here
-    figure, imshow(I)
-    [x, y] = ginput(num_points);
-    close all
-    x = vertcat(x',y',ones(1,num_points));
+     figure, imshow(I)
+     [x, y] = ginput(num_points);
+     close all
+     x = vertcat(x',y',ones(1,num_points));
+     
+
+% 
+%     x = [ 1081 2323 2614 1192  151  682 1039;
+%           1937 1982  929  566 1370 1586 1151;
+%              1    1    1    1    1    1    1];
     
     A = zeros(num_points * 2, 12);
     
