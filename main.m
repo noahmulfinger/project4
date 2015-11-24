@@ -4,6 +4,11 @@ close all
 % Noah's image set:
 % 4177, 4178, 4184, 4186, 4181, 4190
 
+% Mike's image set: 
+% 4179 4183 4187 4189 4198 4201
+
+
+
 I = im2double(imread('./horse/DSCF4190.jpg'));
 
 X = [64 0 29 1;
