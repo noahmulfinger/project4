@@ -7,9 +7,25 @@ close all
 % Mike's image set: 
 % 4179 4183 4187 4189 4198 4201
 
-
+% 2D: C=sum_i__v [xi yi] / n
+% u = sum || vi - C || / n
+%Transformation:           A 
+% 1) subtract C [1 0 -c; 0 1 -c; 0 0 1]            B
+% 2) scale by sqrt(2)/u [sqrt(2)/u 0 0; 0 sqrt(2)/u 0; 0 0 1]
+% T = BA
 
 I = im2double(imread('./horse/DSCF4190.jpg'));
+
+% X = [64 0 29 1; bottom-right red block corner top 
+%     64 0 0 1; bottom-right blue block corner bottom
+%     64 64 29 1; top-right red block corner top
+%     32 48 67 1; yellow block top right  
+%     32 80 67 1; yellow block bottom right
+%     32 80 29 1; corner green block top-left top 
+%     180 20 0 1; 1 in both x,y from lower-right most checkerboard corner 
+%     180 180 0 1; 1 in both x,y from upper-right most checkerboard corner 
+%     20 180 0 1]'; 1 in both x,y from upper-left most checkerboard corner 
+
 
 X = [64 0 29 1;
      64 0 0 1;
