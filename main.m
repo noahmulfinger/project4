@@ -17,11 +17,11 @@ X = [64 0 29 1;
      20 180 0 1]';
 
 
- 
-P4190 = compute_camera_matrix(I,X);
-P = P4190;
+% Get camera matrix
+% P = compute_camera_matrix(I,X);
 
 
+% Checkerboard points
 C = ones(4,121);
 counter = 1;
 for i = 0:20:200
@@ -33,7 +33,7 @@ for i = 0:20:200
     end
 end
 
-
+% Set of points from calibration document
 B = [0, 0, 0;
 64, 0, 0;
 64, 64, 0;
@@ -71,10 +71,13 @@ B = [0, 0, 0;
 32, 80, 67;
 0, 80, 67];
 
+% Attach 1's to end, transpose
 B = cat(2, B, ones(36,1))';
 
+% Add these points to checkerboard points
 D = cat(2, B, C);
 
+% Normalize based on 3rd input
 x = P * D;
 x(1,:) = x(1,:) ./ x(3,:);
 x(2,:) = x(2,:) ./ x(3,:);
