@@ -126,6 +126,7 @@ return;
 
 %Load in camera matrices for subset 1:
 P = load('P4177.mat');
+
 P4177 = P.P4177;
 P = load('P4178.mat');
 P4178 = P.P4178;
@@ -180,16 +181,20 @@ imshow(J), hold on, plot(x, y), hold off
 
 images = [ './horse/DSCF4177.jpg'; 
            './horse/DSCF4178.jpg'; 
-           './horse/DSCF4178.jpg'; 
-           './horse/DSCF4178.jpg'; 
-           './horse/DSCF4178.jpg'; 
-           './horse/DSCF4181.jpg'];
+           './horse/DSCF4181.jpg'; 
+           './horse/DSCF4184.jpg'; 
+           './horse/DSCF4186.jpg'; 
+           './horse/DSCF4190.jpg'];
+       
+cameras = [ 'P4177'; 
+           'P4178'; 
+           'P4181'; 
+           'P4184'; 
+           'P4186'; 
+           'P4190'];
        
 list = [];
-
-
- A = get_3d_points([100,1000], [2,2], P4177, P4178);
- return;
+points = [0 0 0];
 
 for i = 1:size(images,1)
     for j = 1:size(images,1)
@@ -198,11 +203,43 @@ for i = 1:size(images,1)
             second = im2double(imread(images(j,:)));
             [firstPoints, secondPoints] = cpselect(first, second, 'Wait', true);
             %firstPoints = cpcorr(firstPoints, secondPoints, first, second);
-            firstPoints
+            load([cameras(i,:) '.mat'])
+            load([cameras(j,:) '.mat'])
+            t1 = 'P1'
+            t2 = 'P2';
+            eval(sprintf('%s=%s',t1, cameras(i,:)));
+            eval(sprintf('%s=%s',t2, cameras(j,:)));
+            
+            for k = 1:size(firstPoints,1)
+                point = get_3d_points(firstPoints(k,:), secondPoints(k,:), P1, P2); 
+                points = [points; point];
+            end
         end  
     end
     list = [list i];
 end
+
+
+% SAVE THESE POINTS ---
+points = points(2:end,:);
+% ---------------------
+
+C = ones(3,121);
+counter = 1;
+for i = 0:20:200
+    for j = 0:20:200
+        C(1,counter) = i;
+        C(2,counter) = j;
+        C(3,counter) = 0;
+        counter = counter + 1;
+    end
+end
+
+pointsC = [points; C'];
+
+
+pointsC
+scatter3(pointsC(:,1),pointsC(:,2),pointsC(:,3))
 
 %  % Select any number of pairs of points that correspond between images
 % [moved, fixed] = cpselect(per, center, 'Wait', true);
