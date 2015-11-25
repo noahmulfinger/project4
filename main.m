@@ -18,32 +18,36 @@ close all
 
 %% Code for calculating camera matrices 
 
-% I = im2double(imread('./horse/DSCF4179.jpg'));
+I = im2double(imread('./horse/DSCF4201.jpg'));
 
 % X = [64 0 29 1; bottom-right red block top 
 %     64 0 0 1; bottom-right blue block bottom
 %     64 64 29 1; top-right red block corner top
-%     32 48 67 1; yellow block top right top  
-%     32 80 67 1; yellow block bottom right top
+%     32 48 67 1; yellow block top right close  
+%     32 80 67 1; yellow block top right far
+%     0 80 67 1; yellow block top left far
+%     0 48 67 1; yellow block top left close
+%     64 0 19 1; blue bottom right block top 
 %     32 80 29 1; corner green block bottom-right below-yellow
+%     32 80 48 1; corner green block top right far 
 %     180 20 0 1; 1 in both x,y from lower-right most checkerboard corner 
 %     180 180 0 1; 1 in both x,y from upper-right most checkerboard corner 
 %     20 180 0 1]'; 1 in both x,y from upper-left most checkerboard corner 
 
 
-X = [64 0 29 1;
-     64 0 0 1;
-     64 64 29 1;
-     32 48 67 1;
-     32 80 67 1;
-     32 80 29 1;
+X = [64 0 0 1;
+     64 0 29 1;
+     0 80 67 1;
+     0 80 48 1;
      180 20 0 1;
-     180 180 0 1;
-     20 180 0 1]';
+     20 180 0 1;
+     180 140 0 1;
+     0, 0, 19, 1;
+    ]';
 
 
 % Get camera matrix
-% P = compute_camera_matrix(I,X);
+P = compute_camera_matrix(I,X);
 
 
 % Checkerboard points
@@ -97,26 +101,26 @@ B = [0, 0, 0;
 0, 80, 67];
 
 % Attach 1's to end, transpose
-% B = cat(2, B, ones(36,1))';
+B = cat(2, B, ones(36,1))';
 
 % Add these points to checkerboard points
-% D = cat(2, B, C);
+D = cat(2, B, C);
 
 % Normalize based on 3rd input
-% x = P * D;
-% x(1,:) = x(1,:) ./ x(3,:);
-% x(2,:) = x(2,:) ./ x(3,:);
-% x(3,:) = x(3,:) ./ x(3,:);
+x = P * D;
+x(1,:) = x(1,:) ./ x(3,:);
+x(2,:) = x(2,:) ./ x(3,:);
+x(3,:) = x(3,:) ./ x(3,:);
 % 
 % 
-% figure, imshow(I)
-% hold on;
-% for i = 1:size(x,2)
-%     plot(x(1,i),x(2,i),'Marker','.','Color',[1 0 0],'MarkerSize',20);
-% end
+figure, imshow(I)
+hold on;
+for i = 1:size(x,2)
+     plot(x(1,i),x(2,i),'Marker','.','Color',[1 0 0],'MarkerSize',20);
+end
 
 
-
+return; 
 
 %% Epipolar Line Tool using Image Set 1
 
