@@ -16,11 +16,11 @@ close all
 
 I = im2double(imread('./horse/DSCF4179.jpg'));
 
-% X = [64 0 29 1; bottom-right red block top 
-%     64 0 0 1; bottom-right blue block bottom
+% X = [64 0 29 1; bottom-right red block corner top 
+%     64 0 0 1; bottom-right blue block corner bottom
 %     64 64 29 1; top-right red block corner top
-%     32 48 67 1; yellow block top right top  
-%     32 80 67 1; yellow block bottom right top
+%     32 48 67 1; yellow block bottom right  
+%     32 80 67 1; yellow block top right
 %     32 80 29 1; corner green block bottom-right below-yellow
 %     180 20 0 1; 1 in both x,y from lower-right most checkerboard corner 
 %     180 180 0 1; 1 in both x,y from upper-right most checkerboard corner 
