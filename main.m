@@ -1,39 +1,15 @@
 clear all
 close all
 
-% Noah's image set:
+% Image set 1:
 % 4177, 4178, 4184, 4186, 4181, 4190
 
-% Mike's image set: 
+% Image set 2: 
 % 4179 4183 4187 4189 4198 4201
 
-% 2D: C=sum_i__v [xi yi] / n
-% u = sum || vi - C || / n
-%Transformation:           A 
-% 1) subtract C [1 0 -c; 0 1 -c; 0 0 1]            B
-% 2) scale by sqrt(2)/u [sqrt(2)/u 0 0; 0 sqrt(2)/u 0; 0 0 1]
-% T = BA
-
-
-
-%% Code for calculating camera matrices 
+%% Code for calculating camera matrices and plotting the given calibration points
 
 I = im2double(imread('./horse/DSCF4201.jpg'));
-
-% X = [64 0 29 1; bottom-right red block top 
-%     64 0 0 1; bottom-right blue block bottom
-%     64 64 29 1; top-right red block corner top
-%     32 48 67 1; yellow block top right close  
-%     32 80 67 1; yellow block top right far
-%     0 80 67 1; yellow block top left far
-%     0 48 67 1; yellow block top left close
-%     64 0 19 1; blue bottom right block top 
-%     32 80 29 1; corner green block bottom-right below-yellow
-%     32 80 48 1; corner green block top right far 
-%     180 20 0 1; 1 in both x,y from lower-right most checkerboard corner 
-%     180 180 0 1; 1 in both x,y from upper-right most checkerboard corner 
-%     20 180 0 1]'; 1 in both x,y from upper-left most checkerboard corner 
-
 
 X = [64 0 0 1;
      64 0 29 1;
@@ -44,7 +20,6 @@ X = [64 0 0 1;
      180 140 0 1;
      0, 0, 19, 1;
     ]';
-
 
 % Get camera matrix
 P = compute_camera_matrix(I,X);
@@ -179,19 +154,37 @@ imshow(J), hold on, plot(x, y), hold off
 
 %% Select points for 3D reconstruction
 
+% Noah's image set:
+% 4177, 4178, 4184, 4186, 4181, 4190
 images = [ './horse/DSCF4177.jpg'; 
            './horse/DSCF4178.jpg'; 
            './horse/DSCF4181.jpg'; 
            './horse/DSCF4184.jpg'; 
            './horse/DSCF4186.jpg'; 
-           './horse/DSCF4190.jpg'];
-       
+           './horse/DSCF4190.jpg'];      
 cameras = [ 'P4177'; 
            'P4178'; 
            'P4181'; 
            'P4184'; 
            'P4186'; 
            'P4190'];
+       
+       
+% Mike's image set: 
+% 4179 4183 4187 4189 4198 4201    
+images = [ './horse/DSCF4179.jpg'; 
+           './horse/DSCF4183.jpg'; 
+           './horse/DSCF4187.jpg'; 
+           './horse/DSCF4189.jpg'; 
+           './horse/DSCF4198.jpg'; 
+           './horse/DSCF4201.jpg'];      
+cameras = [ 'P4179'; 
+           'P4183'; 
+           'P4187'; 
+           'P4189'; 
+           'P4198'; 
+           'P4201'];
+       
        
 list = [];
 points = [0 0 0];
@@ -202,7 +195,7 @@ for i = 1:size(images,1)
             first = im2double(imread(images(i,:)));
             second = im2double(imread(images(j,:)));
             [firstPoints, secondPoints] = cpselect(first, second, 'Wait', true);
-            %firstPoints = cpcorr(firstPoints, secondPoints, first, second);
+            %firstPoints = cpcorr(firstPoints, secondPoints, first, second) 
             load([cameras(i,:) '.mat'])
             load([cameras(j,:) '.mat'])
             t1 = 'P1'
@@ -219,10 +212,7 @@ for i = 1:size(images,1)
     list = [list i];
 end
 
-
-% SAVE THESE POINTS ---
 points = points(2:end,:);
-% ---------------------
 
 C = ones(3,121);
 counter = 1;
@@ -241,12 +231,29 @@ pointsC = [points; C'];
 pointsC
 scatter3(pointsC(:,1),pointsC(:,2),pointsC(:,3))
 
-%  % Select any number of pairs of points that correspond between images
-% [moved, fixed] = cpselect(per, center, 'Wait', true);
-% 
-% % Refine points using cross-correlation
-% moved = cpcorr(moved, fixed, per, center);
 
+%% Display points from both image sets
+% Load in pointset file first
+
+C = ones(3,121);
+counter = 1;
+for i = 0:20:200
+    for j = 0:20:200
+        C(1,counter) = i;
+        C(2,counter) = j;
+        C(3,counter) = 0;
+        counter = counter + 1;
+    end
+end
+
+
+points = [pointset1; pointset2; C'];
+color1 = [ones(size(pointset1, 1), 1) zeros(size(pointset1, 1), 1) zeros(size(pointset1, 1), 1)];
+color2 = [zeros(size(pointset2, 1), 1) zeros(size(pointset2, 1), 1) ones(size(pointset2, 1), 1)];
+color3 = [zeros(size(C', 1), 1) ones(size(C', 1), 1) zeros(size(C', 1), 1)];
+colors = [color1; color2; color3];
+
+scatter3(points(:,1),points(:,2),points(:,3), 5, colors, 'filled')
 
 
 
